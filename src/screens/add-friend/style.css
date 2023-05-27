@@ -1,0 +1,4 @@
+.received-container{
+    display:flex;
+    flex-direction: row;
+}

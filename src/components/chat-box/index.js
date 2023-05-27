@@ -1,0 +1,145 @@
+// @ts-nocheck
+import "./style.css";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { useSelector } from "react-redux";
+import { firebaseApis, useSendMessageMutation } from "./slice";
+
+const ChatBox = () => {
+  //TODO ENABLE FOR TESTING
+  //const [userId, setUserId] = useState("d45f6449-8004-4728-840b-d73ec932b50c");
+  const [userInp, setUserInp] = useState("");
+  const [msgs, setMsgs] = useState([]);
+  const msgsRef = useRef();
+
+  const selectedContact = useSelector(
+    (state) => state?.contacts?.selectedContact
+  );
+
+  const userId = useSelector((state)=>state?.user?.userInfo?.uid);
+  const [
+    fetchMessages,
+    { isFetching: isFetchingMsgs, isError: isFetchMsgsErr, data },
+  ] = firebaseApis.endpoints.fetchMessages.useLazyQuery();
+  const [sendMessage, { isFetching: sendData, isError: isSendMsgErr }] =
+    useSendMessageMutation();
+
+  useEffect(() => {
+    const responseMsgIds = [];
+    data &&
+      data.length > 0 &&
+      data.forEach((val) => {
+        responseMsgIds.push(val?.msgId);
+      });
+    const responseMsgs = data && [...data];
+    msgs &&
+      msgs.length > 0 &&
+      msgs.forEach((val) => {
+        if (
+          !responseMsgIds.includes(val?.msgId) &&
+          (val?.status === "loading" || val?.status === "error")
+        ) {
+          responseMsgs.push(val);
+        }
+      });
+      responseMsgs && setMsgs(responseMsgs);
+  }, [data]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [msgs]);
+
+  useEffect(() => {
+    if (!userId || !selectedContact?.userId) {
+      return;
+    }
+    fetchMessages({ userId, selectedContactId: selectedContact?.userId });
+  }, [selectedContact, userId]);
+
+  const scrollToBottom = () => {
+    msgsRef?.current.scrollIntoView();
+  };
+
+  const storeMessage = () => {
+    const currentMsgs = [...msgs];
+    const timestamp = Date.now();
+    const msgId = uuidv4();
+    const msgObj = {
+      msgId,
+      message: userInp,
+      timestamp,
+      msgType: "send",
+      status: "loading",
+    };
+    currentMsgs.push(msgObj);
+    setMsgs((prevState) => {
+      return currentMsgs;
+    });
+    sendMessage({
+      msgId,
+      senderId: userId,
+      receiverId: selectedContact?.userId,
+      message: userInp,
+      timestamp: timestamp,
+    })
+      .unwrap()
+      .catch((err) => {
+        msgErrorUpdate(msgObj);
+      });
+  };
+
+  const msgErrorUpdate = (msgObj) => {
+    setMsgs((prevState) => {
+      let newMsg = prevState.map((msg) => {
+        if (msgObj?.msgId === msg?.msgId) {
+          msg.status = "error";
+        }
+        return msg;
+      });
+      const findMsgObj = newMsg.find((msg) => msgObj?.msgId === msg?.msgId);
+      const newMsgObj = { ...msgObj, status: "error" };
+      if (!findMsgObj) {
+        newMsg.push(newMsgObj);
+      }
+      return newMsg;
+    });
+  };
+
+  const renderUserMsgs = () => {
+    return (
+      <div className="message-list">
+        {msgs &&
+          msgs.length > 0 &&
+          msgs.map((msg) => (
+            <div
+              key={msg?.msgId}
+              className={
+                msg?.msgType === "send"
+                  ? "chat-box-sender"
+                  : "chat-box-receiver"
+              }
+            >
+              {msg?.status === "loading" && <p>Loading</p>}
+              {msg?.status === "success" && <p>Success</p>}
+              {msg?.status === "error" && <p>Error</p>}
+              <span>{msg?.message}</span>
+            </div>
+          ))}
+        <div ref={msgsRef} />
+      </div>
+    );
+  };
+
+  return (
+    <div className="chatbox-container">
+      <h1>Chat window</h1>
+      {renderUserMsgs()}
+      <div className="input-box">
+        <input value={userInp} onChange={(e) => setUserInp(e?.target?.value)} />
+        <button onClick={storeMessage}>Enter</button>
+      </div>
+    </div>
+  );
+};
+
+export default ChatBox;
