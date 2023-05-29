@@ -22,6 +22,7 @@ function App() {
     onAuthStateChanged(auth, (user) => {
       console.log("User...123", user);
       if(user){
+        //TODO write rtk query to add new user to users database 
         dispatch(updateUser(user));
         fetchContacts({ userId: user?.uid });
       }

@@ -1,28 +1,41 @@
 // @ts-nocheck
 import "./style.css";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useSelector } from "react-redux";
-import { firebaseApis, useSendMessageMutation } from "./slice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  firebaseApis,
+  useLogoutUserMutation,
+  useSendMessageMutation,
+} from "./slice";
+import { useNavigate } from "react-router-dom";
+import { resetUser } from "src/screens/signup/slice";
+import { resetSelectedContact } from "../contact-list/slice";
+import Button from "../button";
+import Input from "../input";
 
 const ChatBox = () => {
-  //TODO ENABLE FOR TESTING
-  //const [userId, setUserId] = useState("d45f6449-8004-4728-840b-d73ec932b50c");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [userInp, setUserInp] = useState("");
   const [msgs, setMsgs] = useState([]);
   const msgsRef = useRef();
 
+  //TODO remove this
+  // const selectedContact = { userId: "User" };
   const selectedContact = useSelector(
     (state) => state?.contacts?.selectedContact
   );
 
-  const userId = useSelector((state)=>state?.user?.userInfo?.uid);
+  const userId = useSelector((state) => state?.user?.userInfo?.uid);
   const [
     fetchMessages,
     { isFetching: isFetchingMsgs, isError: isFetchMsgsErr, data },
   ] = firebaseApis.endpoints.fetchMessages.useLazyQuery();
   const [sendMessage, { isFetching: sendData, isError: isSendMsgErr }] =
     useSendMessageMutation();
+  const [logoutUser] = useLogoutUserMutation();
 
   useEffect(() => {
     const responseMsgIds = [];
@@ -42,7 +55,7 @@ const ChatBox = () => {
           responseMsgs.push(val);
         }
       });
-      responseMsgs && setMsgs(responseMsgs);
+    responseMsgs && setMsgs(responseMsgs);
   }, [data]);
 
   useEffect(() => {
@@ -130,14 +143,62 @@ const ChatBox = () => {
     );
   };
 
-  return (
+  const logout = () => {
+    logoutUser()
+      .unwrap()
+      .then(() => {
+        dispatch(resetUser());
+        dispatch(resetSelectedContact());
+        navigate("/login");
+      });
+  };
+
+  const renderHeader = () => {
+    return (
+      <div className="header-container">
+        <img src={require("../../assets/profile.webp")} />
+        <p>{selectedContact?.userId}</p>
+        <div className="button-group">
+          <Button onClick={() => navigate("/add-friend")} label="Add Friend" />
+          <Button
+            style={{
+              backgroundImage:
+                "linear-gradient(to right, #FF512F 0%, #DD2476  51%, #FF512F  100%)",
+            }}
+            onClick={logout}
+            label="Logout"
+          />
+        </div>
+      </div>
+    );
+  };
+
+  return selectedContact ? (
     <div className="chatbox-container">
-      <h1>Chat window</h1>
+      {renderHeader()}
       {renderUserMsgs()}
       <div className="input-box">
-        <input value={userInp} onChange={(e) => setUserInp(e?.target?.value)} />
-        <button onClick={storeMessage}>Enter</button>
+        <Input
+          value={userInp}
+          onChange={setUserInp}
+          style={{ padding: "15px" }}
+          placeholder={"Enter a message"}
+        />
+        <Button
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #1FA2FF 0%, #12D8FA  51%, #1FA2FF  100%)",
+          }}
+          onClick={storeMessage}
+          label="Enter"
+        />
+        {/* <button onClick={storeMessage}>Enter</button> */}
       </div>
+    </div>
+  ) : (
+    <div className="empty-chatbox-container" ref={msgsRef}>
+      <img src={require("../../assets/messages.png")} />
+      <p>Select a contact to view a list of all contacts and their messages</p>
     </div>
   );
 };

@@ -6,11 +6,63 @@
     flex-direction: column;
     height: 100vh;
     overflow-x: hidden;
+    background-color: #eae6df;
 }
 
-h1{
+.empty-chatbox-container{
     display: flex;
-    border: 1px solid blue;
+    width: 100%;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    overflow-x: hidden;
+    background-color: #eae6df;
+}
+
+.empty-chatbox-container img {
+    width: 150px;
+    max-height: 340px;
+}
+
+.empty-chatbox-container p{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: medium;
+    font-weight: 300;
+}
+
+.header-container{
+    background-color: #e7e8e9;
+    /* box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2px 5px 0 rgba(0, 0, 0, 0.19); */
+    border-bottom: 1px solid #DBD7D7;
+    padding: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative
+}
+
+.header-container img{
+    width: 60px;
+    max-height: 60px;
+    border-radius: 60px;
+}
+
+.header-container p{
+    margin-left: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 300;
+    font-size: medium;
+}
+
+.button-group{
+    display: flex;
+    position: absolute;
+    justify-content:space-between;
+    align-items: center;
+    width: 20%;
+    right: 50px;
 }
 
 .message-list{
@@ -18,7 +70,6 @@ h1{
     flex-direction: column;
     overflow-y: auto;
     width: 100%;
-    border: 1px solid red;
 }
 
 .chat-box-sender{
@@ -44,14 +95,16 @@ h1{
 .input-box{
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     position: absolute;
+    padding: 10px;
     right: 0;
     bottom: 0;
+    background-color: #e7e8e9;
 }
 
 .input-box input{
-    flex: 0.9;
+    flex: 0.85;
     padding: 12px;
 }
 
@@ -63,3 +116,26 @@ h1{
 .input-box button{
     flex: 0.1;
 }
+
+
+         
+.btn-grad {
+    background-image: linear-gradient(to right, #1FA2FF 0%, #12D8FA  51%, #1FA2FF  100%);
+    margin: 10px;
+    padding: 15px 45px;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: white;            
+    box-shadow: 0 0 20px #eee;
+    border-radius: 10px;
+    display: block;
+  }
+
+  .btn-grad:hover {
+    background-position: right center; /* change the direction of the change here */
+    color: #fff;
+    text-decoration: none;
+  }
+ 
