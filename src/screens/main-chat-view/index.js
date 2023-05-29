@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useDispatch, useSelector } from "react-redux";
 import "./style.css";
 import ChatBox from "src/components/chat-box";
@@ -9,8 +10,8 @@ import { resetUser } from "../signup/slice";
 import { resetSelectedContact } from "src/components/contact-list/slice";
 
 function MainChatView() {
-  const userId = useSelector((state) => state?.user?.userInfo?.uid);
-  const userContacts = useFetchContactsQuery({ userId }) || [];
+  const user = useSelector((state) => state?.user?.userInfo);
+  const userContacts = useFetchContactsQuery({ userId: user?.uid }) || [];
   const [logoutUser] = useLogoutUserMutation();
   // @ts-ignore
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ function MainChatView() {
   }
   return (
       <div className="app-container">
-        <ContactList contacts={userContacts?.data} />
+        <ContactList contacts={userContacts?.data} user={user}/>
         <ChatBox />
         <button onClick={() => navigate("/add-friend")}>Add Friend</button>
         <button onClick={logout}>Logout</button>

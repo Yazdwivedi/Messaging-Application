@@ -1,0 +1,14 @@
+#user-inp{
+    padding: 10px;
+    border-radius: 20px;
+    width: 300px;
+    border: 2px solid #E4E4E4;
+    outline: 0px;
+}
+
+#user-inp:focus{
+    /* border: 0.5px solid #E4E4E4; */
+
+    /* outline: 3px solid black; */
+    outline: 1px solid #B8B0B0;
+}
