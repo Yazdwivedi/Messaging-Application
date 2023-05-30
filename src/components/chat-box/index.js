@@ -118,26 +118,40 @@ const ChatBox = () => {
     });
   };
 
+  const getMsgStstus = (userMsg) => {
+    //TODO Attribute these icons
+    switch(userMsg){
+      case "loading": return <img src={require("../../assets/loading.gif")}/>;
+      case "success": return <img src={require("../../assets/success.png")}/>;
+      case "error": return <img src={require("../../assets/fail.png")}/>;
+      default : return <img src={require("../../assets/loading.gif")}/>;
+    }
+  }
+
   const renderUserMsgs = () => {
     return (
       <div className="message-list">
         {msgs &&
           msgs.length > 0 &&
-          msgs.map((msg) => (
-            <div
-              key={msg?.msgId}
-              className={
-                msg?.msgType === "send"
-                  ? "chat-box-sender"
-                  : "chat-box-receiver"
-              }
-            >
-              {msg?.status === "loading" && <p>Loading</p>}
+          msgs.map((msg, i) => {
+            const displayDate = new Date(msg?.timestamp).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+            return (
+              <div
+                key={msg?.msgId}
+                className={
+                  msg?.msgType === "send"
+                    ? "chat-box-sender"
+                    : "chat-box-receiver"
+                }
+              >
+                {/* {msg?.status === "loading" && <p>Loading</p>}
               {msg?.status === "success" && <p>Success</p>}
-              {msg?.status === "error" && <p>Error</p>}
-              <span>{msg?.message}</span>
-            </div>
-          ))}
+              {msg?.status === "error" && <p>Error</p>} */}
+                <p className="message">{msg?.message}</p>
+                <span className="time">{displayDate}{msg?.msgType === "send" && getMsgStstus(msg?.status)}</span>
+              </div>
+            );
+          })}
         <div ref={msgsRef} />
       </div>
     );
@@ -157,7 +171,7 @@ const ChatBox = () => {
     return (
       <div className="header-container">
         <img src={require("../../assets/profile.webp")} />
-        <p>{selectedContact?.userId}</p>
+        <p>{selectedContact?.name}</p>
         <div className="button-group">
           <Button onClick={() => navigate("/add-friend")} label="Add Friend" />
           <Button
@@ -199,6 +213,17 @@ const ChatBox = () => {
     <div className="empty-chatbox-container" ref={msgsRef}>
       <img src={require("../../assets/messages.png")} />
       <p>Select a contact to view a list of all contacts and their messages</p>
+      <div className="initial-button-group">
+        <Button onClick={() => navigate("/add-friend")} label="Add Friend" />
+        <Button
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #FF512F 0%, #DD2476  51%, #FF512F  100%)",
+          }}
+          onClick={logout}
+          label="Logout"
+        />
+      </div>
     </div>
   );
 };

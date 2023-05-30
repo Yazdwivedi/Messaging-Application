@@ -11,36 +11,19 @@ const ContactList = ({ contacts = [], user = {} }) => {
   const dispatch = useDispatch();
   
   const renderContactList = () => {
-
-    //TODO remove this later
-    let contacts = [
-      { userId: 1, name: "User 1" },
-      { userId: 2, name: "User 2" },
-      { userId: 3, name: "User 3" },
-      { userId: 3, name: "User 3" },
-      { userId: 3, name: "User 3" },
-      { userId: 3, name: "User 3" },
-      { userId: 3, name: "User 3" },
-      { userId: 3, name: "User 3" },
-      { userId: 3, name: "User 3" },
-      { userId: 3, name: "User 3" },
-
-       { userId: 3, name: "User 3" },
-        { userId: 3, name: "User 3" },
-        { userId: 3, name: "User 3" }, { userId: 3, name: "User 3" }, { userId: 3, name: "User 3" }, { userId: 3, name: "User 3" }, { userId: 3, name: "User 3" },
-    ];
+    
     let filteredContacts = contacts.filter(val=>(val?.name.toLowerCase()).includes(searchVal.toLowerCase()));
     return filteredContacts?.length>0 ? (
       <div className="contacts-container">
         {filteredContacts &&
           filteredContacts.length > 0 &&
           filteredContacts.map(({ userId, name }) => (
-            <div className="user-contact">
+            <div className="user-contact" onClick={() => dispatch(updateSelectedContact({ userId, name }))}>
               
               <img src={require("../../assets/contacts.png")} />
               <p
                 key={userId}
-                onClick={() => dispatch(updateSelectedContact({ userId }))}
+                
               >
                 {name}
               </p>
