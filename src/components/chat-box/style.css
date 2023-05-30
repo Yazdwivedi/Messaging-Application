@@ -33,9 +33,10 @@
 }
 
 .header-container{
-    background-color: #e7e8e9;
+    background-color: white;
     /* box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2px 5px 0 rgba(0, 0, 0, 0.19); */
     border-bottom: 1px solid #DBD7D7;
+    border-left: 1px solid #DBD7D7;
     padding: 10px;
     display: flex;
     justify-content: flex-start;
