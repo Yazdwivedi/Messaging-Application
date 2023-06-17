@@ -22,8 +22,6 @@ const ChatBox = () => {
   const [msgs, setMsgs] = useState([]);
   const msgsRef = useRef();
 
-  //TODO remove this
-  // const selectedContact = { userId: "User" };
   const selectedContact = useSelector(
     (state) => state?.contacts?.selectedContact
   );

@@ -1,4 +1,120 @@
-.received-container{
-    display:flex;
-    flex-direction: row;
+.sidebar-container {
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: row;
+}
+
+.list-container {
+  padding-top: 30px;
+  border-right: 0.5px solid #e4e4e4;
+  background-color: #00cdac;
+  width: 20%;
+}
+
+.item-container {
+  padding: 15px 30px;
+  padding-left: 60px;
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: medium;
+  line-height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.item-container img {
+  max-height: 25px;
+  width: 25px;
+  margin-right: 10px;
+}
+
+.item-container:hover {
+  background-color: #00b899;
+}
+
+.sidebar-text {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: medium;
+  font-size: small;
+}
+
+.display-section-container {
+  padding: 25px;
+  width: 100%;
+}
+
+.friend-id-container {
+  position: relative;
+}
+
+.loader {
+  width: 25px;
+  height: 25px;
+  border: 1px solid black;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  position: absolute;
+  right: 5px;
+  bottom: 13px;
+  align-self: center;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.requests-container {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: light;
+  font-size: medium;
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  gap: 10px;
+  width: 100%;
+  margin-top: 40px;
+}
+
+.request-box {
+  padding: 20px;
+  border: 2px solid #e4e4e4;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.received-box {
+  padding: 20px;
+  border: 2px solid #e4e4e4;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.received-box div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.received-box:hover {
+  background-color: #e4e4e4;
+}
+
+.request-box:hover {
+  background-color: #e4e4e4;
 }

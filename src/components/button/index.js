@@ -1,8 +1,9 @@
 import "./style.css"
 
-const Button = ({style={}, label="", onClick=()=>{}}) => {
+const Button = ({style={}, label="", onClick=()=>{}, disabled=false}) => {
+    const disabledStyle = disabled ? {opacity: 0.25, cursor: "not-allowed"}:{};
     return (
-        <button id="userButton" style={style} onClick={onClick}>{label}</button>
+        <button disabled={disabled} id="userButton" style={{...style, ...disabledStyle}} onClick={onClick}>{label}</button>
     );
 }
 

@@ -1,27 +1,58 @@
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
-import { updateUser, useCreateUserMutation, useLoginUserMutation } from "./slice";
+// @ts-nocheck
+import "./style.css";
+import { useEffect, useState } from "react";
+import {
+  updateUser,
+  useCreateUserMutation,
+  useLoginUserMutation,
+} from "./slice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import Button from "../../components/button";
+import { useForm } from "react-hook-form";
+import FormInput from "src/components/form-components/input";
+
+
+const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
+const PASSWORD_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
 
 const SignIn = ({ type }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loginErr, setLoginErr] = useState("");
+
   const [createUser] = useCreateUserMutation();
   const [loginUser] = useLoginUserMutation();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const {
+    register,
+    getValues,
+    reset,
+    formState: { errors, isValid },
+  } = useForm({
+    defaultValues: { Email: "", Password: "" },
+    mode: "onTouched",
+  });
+
+  useEffect(() => {
+    reset({ Email: "", Password: "" });
+  }, [type]);
 
   const signInExistingUser = () => {
-    loginUser({email, password}).unwrap().then(res=>{
-      dispatch(updateUser(res));
-      navigate("/main");
-    });
+    const formValues = getValues();
+    loginUser({ email: formValues?.Email, password: formValues?.Password })
+      .unwrap()
+      .then((res) => {
+        dispatch(updateUser(res));
+        navigate("/main");
+      })
+      .catch((err) => setLoginErr(getErrorMessage(err?.code)));
   };
 
   const signInNewUser = () => {
-    createUser({ email, password })
+    const formValues = getValues();
+    createUser({ email: formValues?.Email, password: formValues?.Password })
       .unwrap()
       .then((res) => {
         dispatch(updateUser(res));
@@ -29,25 +60,111 @@ const SignIn = ({ type }) => {
       });
   };
 
+  const getErrorMessage = (msg) => {
+    switch (msg) {
+      case "auth/invalid-email":
+        return "Invalid User Id or Email";
+      case "auth/user-not-found":
+        return "No such user found";
+      default:
+        return "Something went wrong";
+    }
+  };
+
   return type === "signup" ? (
-    <div>
-      <h3>Sign Up</h3>
-      Email
-      <input value={email} onChange={(e) => setEmail(e?.target?.value)} />
-      <br />
-      Password
-      <input value={password} onChange={(e) => setPassword(e?.target?.value)} />
-      <button onClick={signInNewUser}>Submit</button>
+    <div className="signup-container">
+      <div className="input-container">
+        <p className="signup-heading">User Sign-up</p>
+        <FormInput
+          style={{ padding: "15px", width: "90%", alignSelf: "center" }}
+          placeholder={"Enter email"}
+          label={"Email"}
+          register={register}
+          error={errors["Email"]}
+          validation={EMAIL_REGEX}
+          required={true}
+          errMessage={"Please enter proper email"}
+        />
+        <FormInput
+          style={{ padding: "15px", width: "90%", alignSelf: "center" }}
+          placeholder={"Enter password"}
+          label={"Password"}
+          type="password"
+          register={register}
+          error={errors["Password"]}
+          validation={PASSWORD_REGEX}
+          required={true}
+          errMessage={
+            "Password should contain atleast 1 uppercase, 1 lowercase, 1 number, 1 special character and must be between 8 and 20 digits in length"
+          }
+        />
+        <Button
+          onClick={signInNewUser}
+          label="Sign Up"
+          style={{ marginTop: "30px" }}
+          disabled={!isValid}
+        />
+
+        <Button
+          onClick={() => {
+            navigate("/login");
+          }}
+          label="User Login"
+          style={{
+            marginTop: "15px",
+            backgroundImage:
+              "linear-gradient(to right, #045de9 0%, #09c6f9  52%, #045de9 100%)",
+          }}
+        />
+      </div>
     </div>
   ) : (
-    <div>
-      <h3>Login</h3>
-      Email
-      <input value={email} onChange={(e) => setEmail(e?.target?.value)} />
-      <br />
-      Password
-      <input value={password} onChange={(e) => setPassword(e?.target?.value)} />
-      <button onClick={signInExistingUser}>Submit</button>
+    <div className="signup-container">
+      <div className="input-container">
+        <p className="signup-heading">User Login</p>
+        <FormInput
+          style={{ padding: "15px", width: "90%", alignSelf: "center" }}
+          placeholder={"Enter email"}
+          label={"Email"}
+          register={register}
+          error={errors["Email"]}
+          validation={EMAIL_REGEX}
+          required={true}
+          errMessage={"Please enter proper email"}
+        />
+        <FormInput
+          style={{ padding: "15px", width: "90%", alignSelf: "center" }}
+          placeholder={"Enter password"}
+          label={"Password"}
+          type="password"
+          register={register}
+          error={errors["Password"]}
+          validation={PASSWORD_REGEX}
+          required={true}
+          errMessage={
+            "Password should contain atleast 1 uppercase, 1 lowercase, 1 number, 1 special character and must be between 8 and 20 digits in length"
+          }
+        />
+        {loginErr && <p className="err-msg">{loginErr}</p>}
+        <Button
+          onClick={signInExistingUser}
+          label="Log In"
+          style={{ marginTop: "30px" }}
+          disabled={!isValid}
+        />
+
+        <Button
+          onClick={() => {
+            navigate("/sign");
+          }}
+          label="Register User"
+          style={{
+            marginTop: "15px",
+            backgroundImage:
+              "linear-gradient(to right, #045de9 0%, #09c6f9  52%, #045de9 100%)",
+          }}
+        />
+      </div>
     </div>
   );
 };

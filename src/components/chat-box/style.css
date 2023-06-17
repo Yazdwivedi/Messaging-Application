@@ -109,7 +109,8 @@
     flex-direction: column;
     align-self: flex-end;
     padding: 20px;
-    max-width: 40%; 
+    max-width: 40%;
+    min-width: 7%; 
     word-break: break-word;
     margin-bottom: 100px;
     background-color: #D6C9C9;
