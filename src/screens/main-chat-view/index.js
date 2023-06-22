@@ -9,7 +9,7 @@ function MainChatView() {
   const userContacts = useFetchContactsQuery({ userId: user?.uid }) || [];
   return (
       <div className="app-container">
-        <ContactList contacts={userContacts?.data} user={user}/>
+        <ContactList contacts={userContacts?.data?.contactList} user={user}/>
         <ChatBox />
       </div>
   );

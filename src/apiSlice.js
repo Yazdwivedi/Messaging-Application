@@ -10,6 +10,37 @@ import {
 import { db } from "./utils/firestore-provider";
 const usersRef = collection(db, "users");
 
+const fetchContactsForEachUser = async (querySnapshot) => {
+  let contactList = [];
+  const promises = [];
+  let allContactsObj = {};
+  querySnapshot &&
+    querySnapshot.forEach(async (doc) => {
+      allContactsObj = doc.data();
+      allContactsObj?.contacts &&
+        allContactsObj?.contacts.forEach(async (contact) => {
+          if (contact?.id) {
+            const contactQuery = query(
+              usersRef,
+              where("userId", "==", contact?.id || "")
+            );
+            const promise = getDocs(contactQuery).then(
+              (contactQuerySnapshot) => {
+                contactQuerySnapshot &&
+                  contactQuerySnapshot.forEach((user) => {
+                    const contactObj = user.data();
+                    contactList = [...contactList, contactObj];
+                  });
+              }
+            );
+            promises.push(promise);
+          }
+        });
+    });
+  await Promise.all(Array.from(promises));
+  return {contactList, username: allContactsObj?.name};
+};
+
 export const apiSlice = createApi({
   reducerPath: "apiSlice",
   baseQuery: fakeBaseQuery(),
@@ -18,29 +49,10 @@ export const apiSlice = createApi({
       async queryFn(args) {
         const { userId } = args;
         const q = query(usersRef, where("userId", "==", userId || ""));
-        let contactList = [];
         try{
           const querySnapshot = await getDocs(q);
-          querySnapshot && querySnapshot.forEach((doc) => {
-            const allContactsObj = doc.data();
-            allContactsObj?.contacts && allContactsObj?.contacts.forEach(async (contact) => {
-              if (contact?.id) {
-                const contactQuery = query(
-                  usersRef,
-                  where("userId", "==", contact?.id || "")
-                );
-                const contactQuerySnapshot = await getDocs(contactQuery);
-                contactQuerySnapshot && contactQuerySnapshot.forEach((user) => {
-                  const contactObj = user.data();
-
-                  contactList = [...contactList, contactObj];
-
-                });
-              }
-            });
-
-          });
-          return { data: contactList };
+          const results = await fetchContactsForEachUser(querySnapshot);
+          return { data: {contactList: results?.contactList, username: results?.username} };
         }
         catch(error){
           return {error}
@@ -55,26 +67,10 @@ export const apiSlice = createApi({
           await cacheDataLoaded;
           const { userId } = args;
           const q = query(usersRef, where("userId", "==", userId || ""));
-          unsubscribe = onSnapshot(q, (querySnapshot) => {
-            let contactList = [];
-            querySnapshot && querySnapshot.forEach((doc) => {
-              const allContactsObj = doc.data();
-              allContactsObj?.contacts && allContactsObj?.contacts.forEach(async (contact) => {
-                if (contact?.id) {
-                  const contactQuery = query(
-                    usersRef,
-                    where("userId", "==", contact?.id || "")
-                  );
-                  const contactQuerySnapshot = await getDocs(contactQuery);
-                  contactQuerySnapshot && contactQuerySnapshot.forEach((user) => {
-                    const contactObj = user.data();
-                    contactList = [...contactList, contactObj];
-                  });
-                }
-                updateCachedData((draft) => {
-                  return contactList;
-                });
-              });
+          unsubscribe = onSnapshot(q, async(querySnapshot) => {
+            const results = await fetchContactsForEachUser(querySnapshot);
+            updateCachedData((draft) => {
+              return {contactList: results?.contactList, username: results?.username};
             });
           });
         } catch (error) {}
@@ -84,5 +80,4 @@ export const apiSlice = createApi({
     }),
   }),
 });
-
 export const { useFetchContactsQuery } = apiSlice;

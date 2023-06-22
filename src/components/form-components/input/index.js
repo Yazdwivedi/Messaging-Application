@@ -8,7 +8,7 @@ const FormInput = ({
   labelStyle = {},
   type = "text",
   errMessage = "",
-  validation = /^$/,
+  validation = "",
   register=()=>{return {}},
   error=false,
   required=false

@@ -14,7 +14,7 @@ import Button from "src/components/button";
 
 const AddFriend = () => {
   const userId = useSelector((state) => state?.user?.userInfo?.uid);
-  const userContacts = useFetchContactsQuery({ userId }) || [];
+  const userContacts = useFetchContactsQuery({ userId })?.contactList || [];
   const [friendId, setFriendId] = useState("");
   const [selectedContent, setSelectedContent] = useState("Add-Friend");
   const [sendReqErr, setSendReqErr] = useState("No such user found");
@@ -36,7 +36,8 @@ const AddFriend = () => {
   const sendRequest = () => {
     sendNewRequest({ requestId: uuidv4(), userId, friendId, userContacts })
       .unwrap()
-      .catch((err) => setSendReqErr(err));
+      .catch((err) => setSendReqErr(err))
+      .finally(()=>setFriendId(""));
   };
 
   const updateUserRequest = (requestId, type, userReqId) => {
@@ -48,6 +49,8 @@ const AddFriend = () => {
   const renderAddFriend = () => {
     return (
       <div style={{ maxWidth: "30%" }}>
+        <p className="main-header">Your User Id:-</p>
+        <p>{userId}</p>
         <div className="friend-id-container">
           <Input
             value={friendId}
@@ -165,6 +168,7 @@ const AddFriend = () => {
                 style={
                   selectedContent === key ? { backgroundColor: "#00b899" } : {}
                 }
+                key={key}
                 onClick={() => setSelectedContent(key)}
               >
                 <img src={icon} />

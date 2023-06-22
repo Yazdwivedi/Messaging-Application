@@ -31,7 +31,7 @@ const SignIn = ({ type }) => {
     reset,
     formState: { errors, isValid },
   } = useForm({
-    defaultValues: { Email: "", Password: "" },
+    defaultValues: { Email: "", Password: "", Username: "" },
     mode: "onTouched",
   });
 
@@ -44,7 +44,6 @@ const SignIn = ({ type }) => {
     loginUser({ email: formValues?.Email, password: formValues?.Password })
       .unwrap()
       .then((res) => {
-        dispatch(updateUser(res));
         navigate("/main");
       })
       .catch((err) => setLoginErr(getErrorMessage(err?.code)));
@@ -52,10 +51,9 @@ const SignIn = ({ type }) => {
 
   const signInNewUser = () => {
     const formValues = getValues();
-    createUser({ email: formValues?.Email, password: formValues?.Password })
+    createUser({ email: formValues?.Email, password: formValues?.Password, name: formValues?.Username })
       .unwrap()
       .then((res) => {
-        dispatch(updateUser(res));
         navigate("/main");
       });
   };
@@ -75,6 +73,15 @@ const SignIn = ({ type }) => {
     <div className="signup-container">
       <div className="input-container">
         <p className="signup-heading">User Sign-up</p>
+        <FormInput
+          style={{ padding: "15px", width: "90%", alignSelf: "center" }}
+          placeholder={"Enter Username"}
+          label={"Username"}
+          register={register}
+          error={errors["Username"]}
+          required={true}
+          errMessage={"Please enter a username"}
+        />
         <FormInput
           style={{ padding: "15px", width: "90%", alignSelf: "center" }}
           placeholder={"Enter email"}

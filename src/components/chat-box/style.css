@@ -34,7 +34,6 @@
 
 .header-container{
     background-color: white;
-    /* box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2px 5px 0 rgba(0, 0, 0, 0.19); */
     border-bottom: 1px solid #DBD7D7;
     border-left: 1px solid #DBD7D7;
     padding: 10px;
@@ -116,6 +115,7 @@
     background-color: #D6C9C9;
     margin-top: 10px;
     border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
     position: relative;
 
 }
@@ -131,6 +131,7 @@
     background-color: #D6C9C9;
     margin-top: 10px;
     border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
     position: relative;
 
 }

@@ -141,7 +141,7 @@ export const contactApis = apiSlice.injectEndpoints({
             throw "Already in friend list";
           }
           if (userId === friendId) {
-            throw "Cannot send friend id to self";
+            throw "Cannot send friend request to self";
           }
           await new Promise(async (resolve, reject) => {
             try {

@@ -1,4 +1,3 @@
-import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
   collection,
   addDoc,
@@ -107,20 +106,6 @@ export const firebaseApis = apiSlice.injectEndpoints({
     }),
     sendMessage: builder.mutation({
       async queryFn(args) {
-        //FOR TESTING PURPOSE
-        // return await new Promise((res, rej)=>{
-        //   setTimeout(async()=>{
-        //     if(args?.message==="error"){
-        //         return rej({error: "luls"})
-        //     }
-        //     try {
-        //       const docRef = await addDoc(collection(db, "messages"), args);
-        //       return { data: docRef.id };
-        //     } catch (error) {
-        //       return {error}
-        //     }
-        //   },5000);
-        // })
         try {
           const docRef = await addDoc(collection(db, "messages"), args);
           return { data: docRef.id };

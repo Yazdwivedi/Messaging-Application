@@ -12,8 +12,6 @@ const ContactList = ({ contacts = [], user = {} }) => {
   );
   const dispatch = useDispatch();
 
-  console.log("selectedContact...123", selectedContact);
-
   const renderContactList = () => {
     let filteredContacts = contacts.filter((val) =>
       val?.name.toLowerCase().includes(searchVal.toLowerCase())
@@ -46,7 +44,7 @@ const ContactList = ({ contacts = [], user = {} }) => {
     <div className="contacts-box-container">
       <div className="user-info">
         <img src={require("../../assets/profile.webp")} />
-        <p>{user?.displayName || "Yash Dwivedi"}</p>
+        <p>{user?.username || ""}</p>
         <Input
           value={searchVal}
           onChange={setSearchVal}

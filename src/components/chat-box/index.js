@@ -142,9 +142,6 @@ const ChatBox = () => {
                     : "chat-box-receiver"
                 }
               >
-                {/* {msg?.status === "loading" && <p>Loading</p>}
-              {msg?.status === "success" && <p>Success</p>}
-              {msg?.status === "error" && <p>Error</p>} */}
                 <p className="message">{msg?.message}</p>
                 <span className="time">{displayDate}{msg?.msgType === "send" && getMsgStstus(msg?.status)}</span>
               </div>
@@ -161,6 +158,7 @@ const ChatBox = () => {
       .then(() => {
         dispatch(resetUser());
         dispatch(resetSelectedContact());
+        localStorage.clear();
         navigate("/login");
       });
   };
@@ -204,7 +202,6 @@ const ChatBox = () => {
           onClick={storeMessage}
           label="Enter"
         />
-        {/* <button onClick={storeMessage}>Enter</button> */}
       </div>
     </div>
   ) : (
