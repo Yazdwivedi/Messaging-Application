@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { updateUser } from "./screens/signup/slice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { Outlet, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import { apiSlice } from "./apiSlice";
 import MainChatView from "./screens/main-chat-view";
 import AddFriend from "./screens/add-friend";
@@ -26,8 +26,8 @@ function App() {
             .unwrap()
             .then((res) => {
               dispatch(updateUser({ ...user, username: res?.username }));
-              localStorage.setItem("userLoginToken", user?.uid)
-            })
+              localStorage.setItem("userLoginToken", user?.uid);
+            });
         }
       });
     } catch (err) {
@@ -40,26 +40,29 @@ function App() {
   return (
     !isLoading && (
       <>
-        <Routes>
-          <Route
-            path="main"
-            element={
-              <AuthGuard id={userId}>
-                <MainChatView />
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="add-friend"
-            element={
-              <AuthGuard id={userId}>
-                <AddFriend />
-              </AuthGuard>
-            }
-          />
-          <Route path="sign" element={<SignIn type="signup" />} />
-          <Route path="login" element={<SignIn type="login" />} />
-        </Routes>
+        <HashRouter >
+          <Routes>
+            <Route
+              path="main"
+              element={
+                <AuthGuard id={userId}>
+                  <MainChatView />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="add-friend"
+              element={
+                <AuthGuard id={userId}>
+                  <AddFriend />
+                </AuthGuard>
+              }
+            />
+            <Route path="sign" element={<SignIn type="signup" />} />
+            <Route path="login" element={<SignIn type="login" />} />
+            {/* <Route path="/*" element={<Navigate to="/login" />}  />  */}
+          </Routes>
+        </HashRouter>
       </>
     )
   );
