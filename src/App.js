@@ -14,7 +14,6 @@ function App() {
   const auth = getAuth();
   const userId = localStorage.getItem("userLoginToken");
   const [isLoading, setIsLoading] = useState(true);
-  console.log("isLoading...123", isLoading);
   const [fetchContacts, { isError, isFetching, data }] =
     apiSlice.endpoints.fetchContacts.useLazyQuery();
   const dispatch = useDispatch();
@@ -27,7 +26,6 @@ function App() {
           fetchContacts({ userId: user?.uid })
             .unwrap()
             .then((res) => {
-              console.log("Response...123", res);
               dispatch(updateUser({ ...user, username: res?.username }));
               localStorage.setItem("userLoginToken", user?.uid);
               navigate("/main");
