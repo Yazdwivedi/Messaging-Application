@@ -5,7 +5,9 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
 import { apiSlice } from "src/apiSlice";
+import { db } from "src/utils/firestore-provider";
 
 const initialState = {
   userInfo: null,
@@ -16,7 +18,7 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state, action) => {
-      state.userInfo = action?.payload;
+      state["userInfo"] = action?.payload;
     },
     resetUser: (state, action) => {
       state = initialState;
@@ -35,6 +37,7 @@ export const signUpApi = apiSlice.injectEndpoints({
             args?.email,
             args?.password
           );
+          await addDoc(collection(db, "users"), {name: args?.name, userId: userCredential?.user?.uid});
           return { data: userCredential?.user };
         } catch (error) {
           const errorCode = error?.code;

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { updateUser } from "./screens/signup/slice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { Outlet, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { apiSlice } from "./apiSlice";
 import MainChatView from "./screens/main-chat-view";
 import AddFriend from "./screens/add-friend";
@@ -12,33 +12,62 @@ import AuthGuard from "./utils/auth-guard";
 
 function App() {
   const auth = getAuth();
-  const userId = useSelector((state) => state?.user?.userInfo?.uid);
+  const userId = localStorage.getItem("userLoginToken");
   const [isLoading, setIsLoading] = useState(true);
+  console.log("isLoading...123", isLoading);
   const [fetchContacts, { isError, isFetching, data }] =
     apiSlice.endpoints.fetchContacts.useLazyQuery();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      console.log("User...123", user);
-      if(user){
-        dispatch(updateUser(user));
-        fetchContacts({ userId: user?.uid });
-      }
+    try {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          fetchContacts({ userId: user?.uid })
+            .unwrap()
+            .then((res) => {
+              console.log("Response...123", res);
+              dispatch(updateUser({ ...user, username: res?.username }));
+              localStorage.setItem("userLoginToken", user?.uid);
+              navigate("/main");
+            });
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      localStorage.clear();
+    } finally {
       setIsLoading(false);
-    });
+    }
   }, []);
 
-  return !isLoading && (
-    <>
-      <Routes>
-        <Route path="main" element={<AuthGuard id={userId}><MainChatView /></AuthGuard>} />
-        <Route path="add-friend" element={<AuthGuard id={userId}><AddFriend /></AuthGuard>} />
-        <Route path="sign" element={<SignIn type="signup"/>} />
-        <Route path="login" element={<SignIn type="login"/>} />
-
-      </Routes>
-    </>
+  return (
+    !isLoading && (
+      <>
+          <Routes>
+            <Route
+              path="main"
+              element={
+                <AuthGuard id={userId}>
+                  <MainChatView />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="add-friend"
+              element={
+                <AuthGuard id={userId}>
+                  <AddFriend />
+                </AuthGuard>
+              }
+            />
+            <Route path="sign" element={<SignIn type="signup" />} />
+            <Route path="login" element={<SignIn type="login" />} />
+            {/* <Route path="/*" element={<Navigate to="/login" />}  />  */}
+          </Routes>
+      </>
+    )
   );
 }
 
