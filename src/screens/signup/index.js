@@ -41,7 +41,6 @@ const SignIn = ({ type }) => {
     loginUser({ email: formValues?.Email, password: formValues?.Password })
       .unwrap()
       .catch((err) => {
-        console.log("Error...123", err)
         setLoginErr(getErrorMessage(err?.code))});
   };
 
@@ -50,7 +49,6 @@ const SignIn = ({ type }) => {
     createUser({ email: formValues?.Email, password: formValues?.Password, name: formValues?.Username })
       .unwrap()
       .catch((err) => {
-        console.log("Error...123", err)
         setLoginErr(getErrorMessage(err?.code))});
   };
 
