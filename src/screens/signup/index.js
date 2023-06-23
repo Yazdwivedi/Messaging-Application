@@ -2,12 +2,10 @@
 import "./style.css";
 import { useEffect, useState } from "react";
 import {
-  updateUser,
   useCreateUserMutation,
   useLoginUserMutation,
 } from "./slice";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import Button from "../../components/button";
 import { useForm } from "react-hook-form";
 import FormInput from "src/components/form-components/input";
@@ -24,7 +22,6 @@ const SignIn = ({ type }) => {
   const [loginUser] = useLoginUserMutation();
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const {
     register,
     getValues,
@@ -43,19 +40,18 @@ const SignIn = ({ type }) => {
     const formValues = getValues();
     loginUser({ email: formValues?.Email, password: formValues?.Password })
       .unwrap()
-      .then((res) => {
-        navigate("/main");
-      })
-      .catch((err) => setLoginErr(getErrorMessage(err?.code)));
+      .catch((err) => {
+        console.log("Error...123", err)
+        setLoginErr(getErrorMessage(err?.code))});
   };
 
   const signInNewUser = () => {
     const formValues = getValues();
     createUser({ email: formValues?.Email, password: formValues?.Password, name: formValues?.Username })
       .unwrap()
-      .then((res) => {
-        navigate("/main");
-      });
+      .catch((err) => {
+        console.log("Error...123", err)
+        setLoginErr(getErrorMessage(err?.code))});
   };
 
   const getErrorMessage = (msg) => {
@@ -105,6 +101,7 @@ const SignIn = ({ type }) => {
             "Password should contain atleast 1 uppercase, 1 lowercase, 1 number, 1 special character and must be between 8 and 20 digits in length"
           }
         />
+        {loginErr && <p className="err-msg">{loginErr}</p>}
         <Button
           onClick={signInNewUser}
           label="Sign Up"

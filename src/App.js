@@ -3,7 +3,7 @@ import "./App.css";
 import { useDispatch } from "react-redux";
 import { updateUser } from "./screens/signup/slice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { HashRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { apiSlice } from "./apiSlice";
 import MainChatView from "./screens/main-chat-view";
 import AddFriend from "./screens/add-friend";
@@ -14,9 +14,11 @@ function App() {
   const auth = getAuth();
   const userId = localStorage.getItem("userLoginToken");
   const [isLoading, setIsLoading] = useState(true);
+  console.log("isLoading...123", isLoading);
   const [fetchContacts, { isError, isFetching, data }] =
     apiSlice.endpoints.fetchContacts.useLazyQuery();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     try {
@@ -25,13 +27,16 @@ function App() {
           fetchContacts({ userId: user?.uid })
             .unwrap()
             .then((res) => {
+              console.log("Response...123", res);
               dispatch(updateUser({ ...user, username: res?.username }));
               localStorage.setItem("userLoginToken", user?.uid);
+              navigate("/main");
             });
         }
       });
     } catch (err) {
       console.log(err);
+      localStorage.clear();
     } finally {
       setIsLoading(false);
     }
@@ -40,7 +45,6 @@ function App() {
   return (
     !isLoading && (
       <>
-        <HashRouter >
           <Routes>
             <Route
               path="main"
@@ -62,7 +66,6 @@ function App() {
             <Route path="login" element={<SignIn type="login" />} />
             {/* <Route path="/*" element={<Navigate to="/login" />}  />  */}
           </Routes>
-        </HashRouter>
       </>
     )
   );

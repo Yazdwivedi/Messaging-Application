@@ -6,12 +6,15 @@ import reportWebVitals from "./reportWebVitals";
 import { FirestoreProvider } from "./utils/firestore-provider";
 import { Provider } from "react-redux";
 import { store } from "./store";
+import { HashRouter } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>
     <FirestoreProvider>
+      <HashRouter>
         <App />
+      </HashRouter>
     </FirestoreProvider>
   </Provider>
 );
