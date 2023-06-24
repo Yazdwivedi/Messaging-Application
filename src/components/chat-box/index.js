@@ -14,7 +14,7 @@ import { resetSelectedContact } from "../contact-list/slice";
 import Button from "../button";
 import Input from "../input";
 
-const ChatBox = () => {
+const ChatBox = ({ display, setDisplay, isWindowMobile }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -118,13 +118,17 @@ const ChatBox = () => {
 
   const getMsgStstus = (userMsg) => {
     //TODO Attribute these icons
-    switch(userMsg){
-      case "loading": return <img src={require("../../assets/loading.gif")}/>;
-      case "success": return <img src={require("../../assets/success.png")}/>;
-      case "error": return <img src={require("../../assets/fail.png")}/>;
-      default : return <img src={require("../../assets/loading.gif")}/>;
+    switch (userMsg) {
+      case "loading":
+        return <img src={require("../../assets/loading.gif")} />;
+      case "success":
+        return <img src={require("../../assets/success.png")} />;
+      case "error":
+        return <img src={require("../../assets/fail.png")} />;
+      default:
+        return <img src={require("../../assets/loading.gif")} />;
     }
-  }
+  };
 
   const renderUserMsgs = () => {
     return (
@@ -132,7 +136,10 @@ const ChatBox = () => {
         {msgs &&
           msgs.length > 0 &&
           msgs.map((msg, i) => {
-            const displayDate = new Date(msg?.timestamp).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+            const displayDate = new Date(msg?.timestamp).toLocaleTimeString(
+              "en-US",
+              { hour: "2-digit", minute: "2-digit" }
+            );
             return (
               <div
                 key={msg?.msgId}
@@ -143,7 +150,10 @@ const ChatBox = () => {
                 }
               >
                 <p className="message">{msg?.message}</p>
-                <span className="time">{displayDate}{msg?.msgType === "send" && getMsgStstus(msg?.status)}</span>
+                <span className="time">
+                  {displayDate}
+                  {msg?.msgType === "send" && getMsgStstus(msg?.status)}
+                </span>
               </div>
             );
           })}
@@ -166,14 +176,33 @@ const ChatBox = () => {
   const renderHeader = () => {
     return (
       <div className="header-container">
-        <img src={require("../../assets/profile.webp")} />
+        {isWindowMobile && (
+          <img
+            className="back-img"
+            src={require("../../assets/back.png")}
+            onClick={() => {
+              dispatch(resetSelectedContact());
+              setDisplay("list");
+            }}
+          />
+        )}
+        <img
+          className="profile-img"
+          src={require("../../assets/profile.webp")}
+        />
         <p>{selectedContact?.name}</p>
         <div className="button-group">
-          <Button onClick={() => navigate("/add-friend")} label="Add Friend" />
+          <Button
+            style={{ padding: "10px" }}
+            onClick={() => navigate("/add-friend")}
+            label="Add Friend"
+          />
           <Button
             style={{
               backgroundImage:
                 "linear-gradient(to right, #FF512F 0%, #DD2476  51%, #FF512F  100%)",
+              padding: "10px",
+              marginLeft: isWindowMobile ? "5px" : "0px"
             }}
             onClick={logout}
             label="Logout"
@@ -184,7 +213,16 @@ const ChatBox = () => {
   };
 
   return selectedContact ? (
-    <div className="chatbox-container">
+    <div
+      className="chatbox-container"
+      style={
+        isWindowMobile
+          ? display === "chatbox"
+            ? { display: "flex" }
+            : { display: "none" }
+          : {}
+      }
+    >
       {renderHeader()}
       {renderUserMsgs()}
       <div className="input-box">
@@ -205,7 +243,17 @@ const ChatBox = () => {
       </div>
     </div>
   ) : (
-    <div className="empty-chatbox-container" ref={msgsRef}>
+    <div
+      className="empty-chatbox-container"
+      ref={msgsRef}
+      style={
+        isWindowMobile
+          ? display === "chatbox"
+            ? { display: "block" }
+            : { display: "none" }
+          : {}
+      }
+    >
       <img src={require("../../assets/messages.png")} />
       <p>Select a contact to view a list of all contacts and their messages</p>
       <div className="initial-button-group">

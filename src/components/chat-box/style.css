@@ -43,12 +43,13 @@
     position: relative
 }
 
-.header-container img{
+.profile-img{
     margin-left: 20px;
     width: 60px;
     max-height: 60px;
     border-radius: 60px;
 }
+
 
 .header-container p{
     margin-left: 15px;
@@ -66,7 +67,7 @@
 .button-group{
     display: flex;
     position: absolute;
-    justify-content:space-between;
+    justify-content:space-evenly;
     align-items: center;
     width: 20%;
     right: 30px;
@@ -126,6 +127,7 @@
     align-self:flex-start;
     padding: 20px;
     max-width: 40%; 
+    min-width: 7%; 
     word-break: break-word;
     margin-bottom: 100px;
     background-color: #D6C9C9;
@@ -149,7 +151,6 @@
 
 .input-box input{
     flex: 0.85;
-    padding: 12px;
 }
 
 .input-box input:focus{
@@ -181,5 +182,82 @@
     background-position: right center; /* change the direction of the change here */
     color: #fff;
     text-decoration: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    .chatbox-container{
+        width: 100%;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        height: 100vh;
+        display: none;
+    }
+    
+    .empty-chatbox-container{
+        width: 100%;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        height: 100vh;
+        display:none
+    }
+
+    .chat-box-sender{
+        min-width: 60%; 
+        max-width: 80%;
+    }
+
+    .chat-box-receiver{
+        min-width: 60%; 
+        max-width: 80%;
+    }
+
+    .input-box{
+        display: flex;
+        justify-content:space-between;
+        padding-left: 20px;
+    }
+
+    .input-box input{
+        margin-left: 20px;
+        flex: 0.85;
+    }
+    
+    .header-container{
+        padding: 10px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        position: relative
+    }
+    
+    .header-container p{
+        display: block;
+        font-size: medium;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis; 
+        width: 70px;
+    }
+
+    .profile-img{
+        margin-left: 10px;
+        width: 40px;
+        max-height: 40px;
+        border-radius: 40px;
+    }
+    
+    .back-img{
+        width: 25px;
+        max-height: 60px;
+    }
+
+    .button-group{
+        width: 40%;
+        display: flex;
+        justify-content: space-evenly;
+    }
+
   }
  
