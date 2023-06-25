@@ -11,8 +11,8 @@ export const contactSlice = createSlice({
     updateSelectedContact: (state, action) => {
       state.selectedContact = action?.payload;
     },
-    resetSelectedContact: (state, action) => {
-      state = initialState;
+    resetSelectedContact: (state) => {
+      state.selectedContact = null;
     },
   },
 });

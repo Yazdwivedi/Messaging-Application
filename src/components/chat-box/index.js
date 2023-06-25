@@ -14,7 +14,7 @@ import { resetSelectedContact } from "../contact-list/slice";
 import Button from "../button";
 import Input from "../input";
 
-const ChatBox = () => {
+const ChatBox = ({ display, setDisplay, isWindowMobile }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -116,40 +116,18 @@ const ChatBox = () => {
     });
   };
 
-  const getMsgStstus = (userMsg) => {
+  const getMsgStatus = (userMsg) => {
     //TODO Attribute these icons
-    switch(userMsg){
-      case "loading": return <img src={require("../../assets/loading.gif")}/>;
-      case "success": return <img src={require("../../assets/success.png")}/>;
-      case "error": return <img src={require("../../assets/fail.png")}/>;
-      default : return <img src={require("../../assets/loading.gif")}/>;
+    switch (userMsg) {
+      case "loading":
+        return <img src={require("../../assets/loading.gif")} />;
+      case "success":
+        return <img src={require("../../assets/success.png")} />;
+      case "error":
+        return <img src={require("../../assets/fail.png")} />;
+      default:
+        return <img src={require("../../assets/loading.gif")} />;
     }
-  }
-
-  const renderUserMsgs = () => {
-    return (
-      <div className="message-list">
-        {msgs &&
-          msgs.length > 0 &&
-          msgs.map((msg, i) => {
-            const displayDate = new Date(msg?.timestamp).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
-            return (
-              <div
-                key={msg?.msgId}
-                className={
-                  msg?.msgType === "send"
-                    ? "chat-box-sender"
-                    : "chat-box-receiver"
-                }
-              >
-                <p className="message">{msg?.message}</p>
-                <span className="time">{displayDate}{msg?.msgType === "send" && getMsgStstus(msg?.status)}</span>
-              </div>
-            );
-          })}
-        <div ref={msgsRef} />
-      </div>
-    );
   };
 
   const logout = () => {
@@ -166,14 +144,33 @@ const ChatBox = () => {
   const renderHeader = () => {
     return (
       <div className="header-container">
-        <img src={require("../../assets/profile.webp")} />
+        {isWindowMobile && (
+          <img
+            className="back-img"
+            src={require("../../assets/back.png")}
+            onClick={() => {
+              dispatch(resetSelectedContact());
+              setDisplay("list");
+            }}
+          />
+        )}
+        <img
+          className="profile-img"
+          src={require("../../assets/profile.webp")}
+        />
         <p>{selectedContact?.name}</p>
         <div className="button-group">
-          <Button onClick={() => navigate("/add-friend")} label="Add Friend" />
+          <Button
+            style={{ padding: "10px" }}
+            onClick={() => navigate("/add-friend")}
+            label="Add Friend"
+          />
           <Button
             style={{
               backgroundImage:
                 "linear-gradient(to right, #FF512F 0%, #DD2476  51%, #FF512F  100%)",
+              padding: "10px",
+              marginLeft: isWindowMobile ? "5px" : "0px"
             }}
             onClick={logout}
             label="Logout"
@@ -183,10 +180,40 @@ const ChatBox = () => {
     );
   };
 
-  return selectedContact ? (
-    <div className="chatbox-container">
-      {renderHeader()}
-      {renderUserMsgs()}
+  const renderUserMsgs = () => {
+    return (
+      <div className="message-list">
+        {msgs &&
+          msgs.length > 0 &&
+          msgs.map((msg, i) => {
+            const displayDate = new Date(msg?.timestamp).toLocaleTimeString(
+              "en-US",
+              { hour: "2-digit", minute: "2-digit" }
+            );
+            return (
+              <div
+                key={msg?.msgId}
+                className={
+                  msg?.msgType === "send"
+                    ? "chat-box-sender"
+                    : "chat-box-receiver"
+                }
+              >
+                <p className="message">{msg?.message}</p>
+                <span className="time">
+                  {displayDate}
+                  {msg?.msgType === "send" && getMsgStatus(msg?.status)}
+                </span>
+              </div>
+            );
+          })}
+        <div ref={msgsRef} />
+      </div>
+    );
+  };
+
+  const renderChatInput = () => {
+    return (
       <div className="input-box">
         <Input
           value={userInp}
@@ -203,9 +230,36 @@ const ChatBox = () => {
           label="Enter"
         />
       </div>
+    );
+  };
+
+  return selectedContact ? (
+    <div
+      className={`chatbox-container`} //TODO add animation
+      style={
+        isWindowMobile
+          ? display === "chatbox"
+            ? { display: "flex" }
+            : { display: "none" }
+          : {}
+      }
+    >
+      {renderHeader()}
+      {renderUserMsgs()}
+      {renderChatInput()}
     </div>
   ) : (
-    <div className="empty-chatbox-container" ref={msgsRef}>
+    <div
+      className="empty-chatbox-container"
+      ref={msgsRef}
+      style={
+        isWindowMobile
+          ? display === "chatbox"
+            ? { display: "block" }
+            : { display: "none" }
+          : {}
+      }
+    >
       <img src={require("../../assets/messages.png")} />
       <p>Select a contact to view a list of all contacts and their messages</p>
       <div className="initial-button-group">

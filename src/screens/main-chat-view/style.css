@@ -1,3 +1,9 @@
 .app-container{
     display: flex;
 }
+
+@media screen and (max-width: 768px) {
+    .app-container{
+        display: block;
+    }
+}

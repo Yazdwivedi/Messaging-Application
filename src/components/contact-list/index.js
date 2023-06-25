@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateSelectedContact } from "./slice";
 import Input from "../input";
 
-const ContactList = ({ contacts = [], user = {} }) => {
+const ContactList = ({ contacts = [], user = {}, display, setDisplay, isWindowMobile }) => {
   const [searchVal, setSearchVal] = useState("");
   const selectedContact = useSelector(
     (state) => state?.contacts?.selectedContact
@@ -28,7 +28,10 @@ const ContactList = ({ contacts = [], user = {} }) => {
                   : {}
               }
               className="user-contact"
-              onClick={() => dispatch(updateSelectedContact({ userId, name }))}
+              onClick={() => {
+                isWindowMobile && setDisplay("chatbox");
+                dispatch(updateSelectedContact({ userId, name }));
+              }}
             >
               <img src={require("../../assets/contacts.png")} />
               <p key={userId}>{name}</p>
@@ -41,13 +44,23 @@ const ContactList = ({ contacts = [], user = {} }) => {
   };
 
   return (
-    <div className="contacts-box-container">
+    <div
+      className="contacts-box-container"
+      style={
+        isWindowMobile
+          ? display === "list"
+            ? { display: "flex" }
+            : { display: "none" }
+          : {}
+      }
+    >
       <div className="user-info">
         <img src={require("../../assets/profile.webp")} />
         <p>{user?.username || ""}</p>
         <Input
           value={searchVal}
           onChange={setSearchVal}
+          style={{width: "80%"}}
           placeholder={"Search for a contact"}
         />
       </div>
