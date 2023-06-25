@@ -116,7 +116,7 @@ const ChatBox = ({ display, setDisplay, isWindowMobile }) => {
     });
   };
 
-  const getMsgStstus = (userMsg) => {
+  const getMsgStatus = (userMsg) => {
     //TODO Attribute these icons
     switch (userMsg) {
       case "loading":
@@ -128,38 +128,6 @@ const ChatBox = ({ display, setDisplay, isWindowMobile }) => {
       default:
         return <img src={require("../../assets/loading.gif")} />;
     }
-  };
-
-  const renderUserMsgs = () => {
-    return (
-      <div className="message-list">
-        {msgs &&
-          msgs.length > 0 &&
-          msgs.map((msg, i) => {
-            const displayDate = new Date(msg?.timestamp).toLocaleTimeString(
-              "en-US",
-              { hour: "2-digit", minute: "2-digit" }
-            );
-            return (
-              <div
-                key={msg?.msgId}
-                className={
-                  msg?.msgType === "send"
-                    ? "chat-box-sender"
-                    : "chat-box-receiver"
-                }
-              >
-                <p className="message">{msg?.message}</p>
-                <span className="time">
-                  {displayDate}
-                  {msg?.msgType === "send" && getMsgStstus(msg?.status)}
-                </span>
-              </div>
-            );
-          })}
-        <div ref={msgsRef} />
-      </div>
-    );
   };
 
   const logout = () => {
@@ -212,19 +180,40 @@ const ChatBox = ({ display, setDisplay, isWindowMobile }) => {
     );
   };
 
-  return selectedContact ? (
-    <div
-      className="chatbox-container"
-      style={
-        isWindowMobile
-          ? display === "chatbox"
-            ? { display: "flex" }
-            : { display: "none" }
-          : {}
-      }
-    >
-      {renderHeader()}
-      {renderUserMsgs()}
+  const renderUserMsgs = () => {
+    return (
+      <div className="message-list">
+        {msgs &&
+          msgs.length > 0 &&
+          msgs.map((msg, i) => {
+            const displayDate = new Date(msg?.timestamp).toLocaleTimeString(
+              "en-US",
+              { hour: "2-digit", minute: "2-digit" }
+            );
+            return (
+              <div
+                key={msg?.msgId}
+                className={
+                  msg?.msgType === "send"
+                    ? "chat-box-sender"
+                    : "chat-box-receiver"
+                }
+              >
+                <p className="message">{msg?.message}</p>
+                <span className="time">
+                  {displayDate}
+                  {msg?.msgType === "send" && getMsgStatus(msg?.status)}
+                </span>
+              </div>
+            );
+          })}
+        <div ref={msgsRef} />
+      </div>
+    );
+  };
+
+  const renderChatInput = () => {
+    return (
       <div className="input-box">
         <Input
           value={userInp}
@@ -241,6 +230,23 @@ const ChatBox = ({ display, setDisplay, isWindowMobile }) => {
           label="Enter"
         />
       </div>
+    );
+  };
+
+  return selectedContact ? (
+    <div
+      className={`chatbox-container`} //TODO add animation
+      style={
+        isWindowMobile
+          ? display === "chatbox"
+            ? { display: "flex" }
+            : { display: "none" }
+          : {}
+      }
+    >
+      {renderHeader()}
+      {renderUserMsgs()}
+      {renderChatInput()}
     </div>
   ) : (
     <div

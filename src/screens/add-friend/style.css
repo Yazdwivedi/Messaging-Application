@@ -119,3 +119,83 @@
 .request-box:hover {
   background-color: #e4e4e4;
 }
+
+@media screen and (max-width: 768px) {
+  .list-container {
+    width: 80%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 0px;
+    left:-65%;
+    z-index:1;
+    height: 100vh;
+    animation-fill-mode: forwards;
+  }
+
+  .slide-in-animate{
+    animation-name: slide-in;
+    animation-duration: 0.5s;
+  }
+
+  .slide-out-animate{
+    animation-name: slide-out;
+    animation-duration: 0.5s;
+  }
+
+  @keyframes slide-in {
+    0%   {left:-65%;}
+    100% {left: 0px;}
+  }
+
+  @keyframes slide-out {
+    0%   {left: 0px;}
+    100% {left: -65%;}
+  }
+
+  .menu-icon{
+    align-self: flex-end;
+    max-width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    margin-bottom: 30px;
+    animation-fill-mode: forwards;
+  }
+
+  .rotate-in-animate{
+    animation-name: rotate-in;
+    animation-duration: 0.5s;
+  }
+
+  .rotate-out-animate{
+    animation-name: rotate-out;
+    animation-duration: 0.5s;
+  }
+
+  @keyframes rotate-in{
+    0% {transform: rotate(0deg)}
+    100% {transform: rotate(180deg)}
+  }
+
+  @keyframes rotate-out{
+    0% {transform: rotate(180deg)}
+    100% {transform: rotate(0deg)}
+  }
+
+  .display-section-container {
+    padding-left: 85px;
+    padding-right: 10px;
+    width: 100%;
+  }
+
+  .friend-id-container {
+    position: relative;
+    margin-top: 25px;
+    width: 100%;
+  }
+
+  .requests-container {
+    grid-template-columns: auto auto;
+  }
+
+}
