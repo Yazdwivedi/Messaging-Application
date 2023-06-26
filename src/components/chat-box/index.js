@@ -1,6 +1,6 @@
 // @ts-nocheck
 import "./style.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -72,31 +72,34 @@ const ChatBox = ({ display, setDisplay, isWindowMobile }) => {
   };
 
   const storeMessage = () => {
+    if(userInp===""){
+      return;
+    }
+    const currentInputMsg = userInp;
+    setUserInp("");
     const currentMsgs = [...msgs];
     const timestamp = Date.now();
     const msgId = uuidv4();
     const msgObj = {
       msgId,
-      message: userInp,
+      message: currentInputMsg,
       timestamp,
       msgType: "send",
       status: "loading",
     };
     currentMsgs.push(msgObj);
-    setMsgs((prevState) => {
-      return currentMsgs;
-    });
+    setMsgs(currentMsgs); //TODO test this change
     sendMessage({
       msgId,
       senderId: userId,
       receiverId: selectedContact?.userId,
-      message: userInp,
+      message: currentInputMsg,
       timestamp: timestamp,
     })
       .unwrap()
       .catch((err) => {
         msgErrorUpdate(msgObj);
-      });
+      })
   };
 
   const msgErrorUpdate = (msgObj) => {
@@ -192,7 +195,7 @@ const ChatBox = ({ display, setDisplay, isWindowMobile }) => {
             );
             return (
               <div
-                key={msg?.msgId}
+                key={msg?.msgId || i}
                 className={
                   msg?.msgType === "send"
                     ? "chat-box-sender"
@@ -277,4 +280,4 @@ const ChatBox = ({ display, setDisplay, isWindowMobile }) => {
   );
 };
 
-export default ChatBox;
+export default memo(ChatBox);

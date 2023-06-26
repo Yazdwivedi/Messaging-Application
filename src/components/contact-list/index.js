@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState } from "react";
+import { useState, memo } from "react";
 import "./style.css";
 import { useDispatch, useSelector } from "react-redux";
 import { updateSelectedContact } from "./slice";
@@ -22,6 +22,7 @@ const ContactList = ({ contacts = [], user = {}, display, setDisplay, isWindowMo
           filteredContacts.length > 0 &&
           filteredContacts.map(({ userId, name }) => (
             <div
+              key={userId}
               style={
                 selectedContact?.userId === userId
                   ? { backgroundColor: "#F9F5F4" }
@@ -69,4 +70,4 @@ const ContactList = ({ contacts = [], user = {}, display, setDisplay, isWindowMo
   );
 };
 
-export default ContactList;
+export default memo(ContactList);
